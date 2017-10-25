@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String email;
     private String password;
@@ -19,6 +19,8 @@ public class User {
 
     private Boolean admin;
 
+    public User() {}
+
     public User(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
@@ -26,7 +28,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public User(Integer id, String email, String password, String firstName, String lastName) {
+    public User(Long id, String email, String password, String firstName, String lastName) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -34,11 +36,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(Integer Id) {
+    public void setId(Long Id) {
         this.id = id;
     }
 

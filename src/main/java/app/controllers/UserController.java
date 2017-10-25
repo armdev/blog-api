@@ -18,7 +18,7 @@ public class UserController {
      * GET METHODS
      */
     @RequestMapping(method=RequestMethod.GET, value="/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable long userId) {
+    public ResponseEntity<User> getUser(@PathVariable Long userId) {
         // Response to return to client
         ResponseEntity<User> res;
 
@@ -55,13 +55,10 @@ public class UserController {
      * POST METHODS
      */
     @RequestMapping(method=RequestMethod.POST)
-    public ResponseEntity<User> newUser(@RequestParam String email,
-                          @RequestParam String password,
-                          @RequestParam String firstName,
-                          @RequestParam String lastName) {
+    public ResponseEntity<User> newUser(@RequestBody User u) {
         ResponseEntity<User> res;
 
-        User user = userDAO.save(new User(email, password, firstName, lastName));
+        User user = userDAO.save(u);
 
         if(user == null) {
             res = new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
@@ -76,18 +73,34 @@ public class UserController {
      * PUT METHODS
      */
     @RequestMapping(method=RequestMethod.PUT, value="/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable long userId,
-                                           @RequestParam String email,
-                                           @RequestParam String password,
-                                           @RequestParam String firstName,
-                                           @RequestParam String lastName) {
+    public ResponseEntity<User> updateUser(@PathVariable Long userId,
+                                           @RequestBody User u) {
         ResponseEntity<User> res;
 
-        User user = userDAO.save(new User(((Long) userId).intValue(), email, password, firstName, lastName));
+        User user = userDAO.findOne(userId);
 
         if(user == null) {
-            res = new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            // No user was found with given UserId
+            res = new ResponseEntity<User>(HttpStatus.NOT_FOUND);
         } else {
+            if(u.getEmail() != null) {
+                user.setEmail(u.getEmail());
+            }
+
+            if(u.getPassword() != null) {
+                user.setPassword(u.getPassword());
+            }
+
+            if(u.getFirstName() != null) {
+                user.setFirstName(u.getFirstName());
+            }
+
+            if(u.getLastName() != null) {
+                user.setLastName(u.getLastName());
+            }
+
+            userDAO.save(user);
+
             res = new ResponseEntity<User>(user, HttpStatus.OK);
         }
 
