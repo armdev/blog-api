@@ -1,9 +1,6 @@
 package app.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Post {
@@ -11,7 +8,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name="userId")
+    private User user;
 
     private String title;
     private String body;
@@ -24,13 +23,13 @@ public class Post {
         this.id = id;
     }
 
-//    public User getUser() {
-//        return this.user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getTitle() {
         return this.title;
