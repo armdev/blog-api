@@ -32,7 +32,7 @@ public class PostController {
         Post post = postService.find(id);
 
         if(post == null) {
-            throw new NoContentException();
+            throw new BadRequestException();
         }
 
         return post;
@@ -74,7 +74,12 @@ public class PostController {
      */
     @RequestMapping(method=RequestMethod.POST, value = "/users/{id}/posts")
     @ResponseStatus(value = HttpStatus.OK)
-    public Post newPost(@PathVariable Long id, @RequestBody Post post) throws BadRequestException {
+    public Post newPost(@PathVariable Long id, @RequestBody Post post) {
+
+        if(!userService.exists(id)) {
+            throw new BadRequestException();
+        }
+
         post.setUser(new User(id));
         return postService.save(post);
     }
@@ -84,7 +89,12 @@ public class PostController {
      */
     @RequestMapping(method = RequestMethod.PUT, value = "/posts/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public Post updatePost(@PathVariable Long id, @RequestBody Post post) throws BadRequestException {
+    public Post updatePost(@PathVariable Long id, @RequestBody Post post) {
+
+        if(!postService.exists(id)) {
+            throw new BadRequestException();
+        }
+
         post.setId(id);
         return postService.save(post);
     }
@@ -92,7 +102,12 @@ public class PostController {
     @RequestMapping(method = RequestMethod.PATCH, value = "/posts/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @Patch(service = PostService.class, id = Long.class)
-    public Post patchPost(@PathVariable Long id, @PatchRequestBody Post post) throws BadRequestException {
+    public Post patchPost(@PathVariable Long id, @PatchRequestBody Post post) {
+
+        if(!postService.exists(id)) {
+            throw new BadRequestException();
+        }
+
         post.setId(id);
         return postService.save(post);
     }
@@ -103,6 +118,11 @@ public class PostController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/posts/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void deletePost(@PathVariable Long id) {
+
+        if(!postService.exists(id)) {
+            throw new BadRequestException();
+        }
+
         postService.delete(id);
     }
 

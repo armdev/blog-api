@@ -12,7 +12,7 @@ public class ExceptionController {
 
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity noContentHandler() {
-        return new ResponseEntity("No resource could be found with given id!", HttpStatus.NOT_FOUND);
+        return new ResponseEntity("Nothing to see here", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -22,6 +22,6 @@ public class ExceptionController {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity generalHandler() {
-        return new ResponseEntity("Opps, we messed something up", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity("Opps, something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

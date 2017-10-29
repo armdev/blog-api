@@ -21,13 +21,13 @@ public class UserController {
     /**
      * GET METHODS
      */
-    @RequestMapping(method=RequestMethod.GET, value = "/users/{userId}")
+    @RequestMapping(method=RequestMethod.GET, value = "/users/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public User getUser(@PathVariable Long userId) {
-        User user = userService.find(userId);
+    public User getUser(@PathVariable Long id) {
+        User user = userService.find(id);
 
         if(user == null) {
-            throw new NoContentException();
+            throw new BadRequestException();
         }
 
         return user;
@@ -57,17 +57,27 @@ public class UserController {
     /**
      * PUT/PATCH METHODS
      */
-    @RequestMapping(method=RequestMethod.PUT, value = "/users/{userId}")
+    @RequestMapping(method=RequestMethod.PUT, value = "/users/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public User updateUser(@PathVariable Long userId, @RequestBody User user) throws BadRequestException {
-        user.setId(userId);
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+
+        if(!userService.exists(id)) {
+            throw new BadRequestException();
+        }
+
+        user.setId(id);
         return userService.save(user);
     }
 
     @RequestMapping(method=RequestMethod.PATCH, value = "/users/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @Patch(service = UserService.class, id = Long.class)
-    public User patchUser(@PathVariable Long id, @PatchRequestBody User user) throws BadRequestException {
+    public User patchUser(@PathVariable Long id, @PatchRequestBody User user) {
+
+        if(!userService.exists(id)) {
+            throw new BadRequestException();
+        }
+
         user.setId(id);
         return userService.save(user);
     }
@@ -75,9 +85,14 @@ public class UserController {
     /**
      * DELETE METHODS
      */
-    @RequestMapping(method=RequestMethod.DELETE, value = "/users/{userId}")
+    @RequestMapping(method=RequestMethod.DELETE, value = "/users/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void deleteUser(@PathVariable long userId) {
-        userService.delete(userId);
+    public void deleteUser(@PathVariable long id) {
+
+        if(!userService.exists(id)) {
+            throw new BadRequestException();
+        }
+
+        userService.delete(id);
     }
 }
