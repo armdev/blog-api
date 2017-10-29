@@ -1,77 +1,74 @@
 package app.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Access(AccessType.PROPERTY)
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
+    private Long id;
     private String email;
     private String password;
-
     private String firstName;
     private String lastName;
 
-    private Boolean admin;
+    // Defaulted to False
+    private Boolean admin = false;
 
+    private List<Post> posts;
+
+    /**
+     * Constructors
+     */
     public User() {}
 
-    public User(String email, String password, String firstName, String lastName) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public User(Long id, String email, String password, String firstName, String lastName) {
+    public User(Long id) {
         this.id = id;
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
+    /**
+     * Getter & Setters
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return this.id;
     }
-
-    public void setId(Long Id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
+    @Column(unique = true, nullable = false)
     public String getEmail() {
         return this.email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @Column(nullable = false)
     public String getPassword() {
         return this.password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Column(nullable = false)
     public String getFirstName() {
         return this.firstName;
     }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @Column(nullable = false)
     public String getLastName() {
         return this.lastName;
     }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -79,8 +76,12 @@ public class User {
     public Boolean getAdmin() {
         return this.admin;
     }
-
     public void setAdmin(Boolean admin) {
         this.admin = admin;
     }
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    public List<Post> getPosts() { return this.posts; }
+    public void setPosts(List<Post> posts) { this.posts = posts; }
 }

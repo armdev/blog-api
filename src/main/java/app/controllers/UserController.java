@@ -1,117 +1,83 @@
 package app.controllers;
 
-import app.dao.UserDAO;
+import app.config.patch.json.Patch;
+import app.config.patch.json.PatchRequestBody;
+import app.controllers.exceptions.BadRequestException;
+import app.controllers.exceptions.NoContentException;
+import app.service.user.UserService;
 import app.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private UserDAO userDAO;
+    private UserService userService;
 
     /**
      * GET METHODS
      */
-    @RequestMapping(method=RequestMethod.GET, value="/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable Long userId) {
-        // Response to return to client
-        ResponseEntity<User> res;
-
-        // Find user by Id from URL
-        User user = userDAO.findOne(userId);
+    @RequestMapping(method=RequestMethod.GET, value = "/users/{userId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public User getUser(@PathVariable Long userId) {
+        User user = userService.find(userId);
 
         if(user == null) {
-            res = new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-        } else {
-            res = new ResponseEntity<User>(user, HttpStatus.OK);
+            throw new NoContentException();
         }
 
-        return res;
+        return user;
     }
 
-    @RequestMapping(method=RequestMethod.GET)
-    public ResponseEntity<Iterable<User>> getUsers() {
-        // Response to return to client
-        ResponseEntity<Iterable<User>> res;
+    @RequestMapping(method=RequestMethod.GET, value = "/users")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<User> getUsers() {
+        List<User> users = userService.findAll();
 
-        // Find all users
-        Iterable<User> users = userDAO.findAll();
-
-        if(users == null) {
-            res = new ResponseEntity<Iterable<User>>(HttpStatus.NOT_FOUND);
-        } else {
-            res = new ResponseEntity<Iterable<User>>(users, HttpStatus.OK);
+        if(users.isEmpty()) {
+            throw new NoContentException();
         }
 
-        return res;
+        return users;
     }
 
     /**
      * POST METHODS
      */
-    @RequestMapping(method=RequestMethod.POST)
-    public ResponseEntity<User> newUser(@RequestBody User u) {
-        ResponseEntity<User> res;
-
-        User user = userDAO.save(u);
-
-        if(user == null) {
-            res = new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
-        } else {
-            res = new ResponseEntity<User>(user, HttpStatus.OK);
-        }
-
-        return res;
+    @RequestMapping(method=RequestMethod.POST, value = "/users")
+    @ResponseStatus(value = HttpStatus.OK)
+    public User newUser(@RequestBody User user) throws BadRequestException {
+        return userService.save(user);
     }
 
     /**
-     * PUT METHODS
+     * PUT/PATCH METHODS
      */
-    @RequestMapping(method=RequestMethod.PUT, value="/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId,
-                                           @RequestBody User u) {
-        ResponseEntity<User> res;
+    @RequestMapping(method=RequestMethod.PUT, value = "/users/{userId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public User updateUser(@PathVariable Long userId, @RequestBody User user) throws BadRequestException {
+        user.setId(userId);
+        return userService.save(user);
+    }
 
-        User user = userDAO.findOne(userId);
-
-        if(user == null) {
-            // No user was found with given UserId
-            res = new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-        } else {
-            if(u.getEmail() != null) {
-                user.setEmail(u.getEmail());
-            }
-
-            if(u.getPassword() != null) {
-                user.setPassword(u.getPassword());
-            }
-
-            if(u.getFirstName() != null) {
-                user.setFirstName(u.getFirstName());
-            }
-
-            if(u.getLastName() != null) {
-                user.setLastName(u.getLastName());
-            }
-
-            userDAO.save(user);
-
-            res = new ResponseEntity<User>(user, HttpStatus.OK);
-        }
-
-        return res;
+    @RequestMapping(method=RequestMethod.PATCH, value = "/users/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    @Patch(service = UserService.class, id = Long.class)
+    public User patchUser(@PathVariable Long id, @PatchRequestBody User user) throws BadRequestException {
+        user.setId(id);
+        return userService.save(user);
     }
 
     /**
      * DELETE METHODS
      */
-    @RequestMapping(method=RequestMethod.DELETE, value="/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable long userId) {
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    @RequestMapping(method=RequestMethod.DELETE, value = "/users/{userId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteUser(@PathVariable long userId) {
+        userService.delete(userId);
     }
 }

@@ -1,10 +1,15 @@
 package app.controllers;
 
-import app.dao.PostDAO;
+import app.config.patch.json.Patch;
+import app.config.patch.json.PatchRequestBody;
+import app.controllers.exceptions.BadRequestException;
+import app.controllers.exceptions.NoContentException;
 import app.models.Post;
+import app.models.User;
+import app.service.post.PostService;
+import app.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,82 +18,92 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-    private PostDAO postDAO;
+    private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     /**
      * GET METHODS
      */
-    @RequestMapping(method=RequestMethod.GET, value="/post/{postId}")
-    public ResponseEntity<Post> getPost(@PathVariable Long postId) {
-        ResponseEntity<Post> res;
-
-        // Find post by id
-        Post post = postDAO.findOne(postId);
+    @RequestMapping(method=RequestMethod.GET, value = "/posts/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Post getPost(@PathVariable Long id) {
+        Post post = postService.find(id);
 
         if(post == null) {
-            res = new ResponseEntity<Post>(HttpStatus.NOT_FOUND);
-        } else {
-            res = new ResponseEntity<Post>(post, HttpStatus.OK);
+            throw new NoContentException();
         }
 
-        return res;
+        return post;
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="user/{userId}/post")
-    public ResponseEntity<Iterable<Post>> getPostByUser(@PathVariable Long userId) {
-        ResponseEntity<Iterable<Post>> res;
+    @RequestMapping(method=RequestMethod.GET, value = "/posts")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Post> getPosts() {
+        List<Post> posts = postService.findAll();
 
-        // Find all post for given user
-        List<Post> posts = postDAO.findByUserId(userId);
-
-        if(posts == null) {
-            res = new ResponseEntity<Iterable<Post>>(HttpStatus.NOT_FOUND);
-        } else {
-            res = new ResponseEntity<Iterable<Post>>(posts, HttpStatus.OK);
+        if(posts.isEmpty()) {
+            throw new NoContentException();
         }
 
-        return res;
+        return posts;
     }
 
-    @RequestMapping(method=RequestMethod.GET, value="/post")
-    public ResponseEntity<Iterable<Post>> getPosts() {
-        ResponseEntity<Iterable<Post>> res;
 
-        // Find all post
-        Iterable<Post> posts = postDAO.findAll();
-
-        if(posts == null) {
-            res = new ResponseEntity<Iterable<Post>>(HttpStatus.NOT_FOUND);
-        } else {
-            res = new ResponseEntity<Iterable<Post>>(posts, HttpStatus.OK);
+    @RequestMapping(method=RequestMethod.GET, value = "/users/{id}/posts")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Post> getPostsByUser(@PathVariable Long id) {
+        // Check user is valid
+        User user = userService.find(id);
+        if(user == null) {
+            throw new BadRequestException();
         }
 
-        return res;
+        // Check user has posts
+        List<Post> posts = user.getPosts();
+        if(posts.isEmpty()) {
+            throw new NoContentException();
+        }
+
+        return posts;
     }
 
     /**
      * POST METHODS
      */
-    @RequestMapping(method=RequestMethod.POST)
-    public ResponseEntity<Post> newPost(@RequestBody Post p) {
-        ResponseEntity<Post> res;
-
-        Post post = postDAO.save(p);
-
-        if(post == null) {
-            res = new ResponseEntity<Post>(HttpStatus.BAD_REQUEST);
-        } else {
-            res = new ResponseEntity<Post>(post, HttpStatus.OK);
-        }
-
-        return res;
+    @RequestMapping(method=RequestMethod.POST, value = "/users/{id}/posts")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Post newPost(@PathVariable Long id, @RequestBody Post post) throws BadRequestException {
+        post.setUser(new User(id));
+        return postService.save(post);
     }
 
     /**
-     * PUT METHODS
+     * PUT/PATCH METHODS
      */
+    @RequestMapping(method = RequestMethod.PUT, value = "/posts/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Post updatePost(@PathVariable Long id, @RequestBody Post post) throws BadRequestException {
+        post.setId(id);
+        return postService.save(post);
+    }
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/posts/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    @Patch(service = PostService.class, id = Long.class)
+    public Post patchPost(@PathVariable Long id, @PatchRequestBody Post post) throws BadRequestException {
+        post.setId(id);
+        return postService.save(post);
+    }
 
     /**
      * DELETE METHODS
      */
+    @RequestMapping(method = RequestMethod.DELETE, value = "/posts/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deletePost(@PathVariable Long id) {
+        postService.delete(id);
+    }
+
 }
