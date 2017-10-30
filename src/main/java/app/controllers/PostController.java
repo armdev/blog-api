@@ -2,8 +2,8 @@ package app.controllers;
 
 import app.config.patch.json.Patch;
 import app.config.patch.json.PatchRequestBody;
-import app.controllers.exceptions.BadRequestException;
-import app.controllers.exceptions.NoContentException;
+import app.exceptions.BadRequestException;
+import app.exceptions.NoContentException;
 import app.models.Post;
 import app.models.User;
 import app.service.post.PostService;

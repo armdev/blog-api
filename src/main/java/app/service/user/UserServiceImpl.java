@@ -4,6 +4,7 @@ import app.models.User;
 import app.service.user.UserDAO;
 import app.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAll() {
@@ -34,6 +38,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean exists(Long userId) {
         return userDAO.exists(userId);
+    }
+
+    @Override
+    public User create(User userDTO) {
+        User user = new User();
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        return userDAO.save(user);
     }
 
     @Override

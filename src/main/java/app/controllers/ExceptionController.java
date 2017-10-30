@@ -1,7 +1,7 @@
 package app.controllers;
 
-import app.controllers.exceptions.BadRequestException;
-import app.controllers.exceptions.NoContentException;
+import app.exceptions.BadRequestException;
+import app.exceptions.NoContentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

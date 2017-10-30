@@ -2,8 +2,8 @@ package app.controllers;
 
 import app.config.patch.json.Patch;
 import app.config.patch.json.PatchRequestBody;
-import app.controllers.exceptions.BadRequestException;
-import app.controllers.exceptions.NoContentException;
+import app.exceptions.BadRequestException;
+import app.exceptions.NoContentException;
 import app.service.user.UserService;
 import app.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class UserController {
     @RequestMapping(method=RequestMethod.POST, value = "/users")
     @ResponseStatus(value = HttpStatus.OK)
     public User newUser(@RequestBody User user) throws BadRequestException {
-        return userService.save(user);
+        return userService.create(user);
     }
 
     /**

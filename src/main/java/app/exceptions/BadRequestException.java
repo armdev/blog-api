@@ -1,4 +1,4 @@
-package app.controllers.exceptions;
+package app.exceptions;
 
 /**
  * Created by garrettmoore on 10/29/17.

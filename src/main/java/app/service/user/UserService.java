@@ -9,6 +9,7 @@ public interface UserService {
     List<User> findAll(List<Long> userIds);
     User find(Long userId);
     Boolean exists(Long userId);
+    User create(User user);
     User save(User user);
     List<User> save(List<User> users);
     void delete(Long userId);
