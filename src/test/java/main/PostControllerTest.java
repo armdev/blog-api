@@ -125,4 +125,30 @@ public class PostControllerTest {
         // Test
         this.postController.getPostsByUser(id);
     }
+
+    @Test(expected = BadRequestException.class)
+    public void newPost_Failure_BadUser() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Mockito.when(userService.exists(id)).thenReturn(false);
+
+        // Test
+        this.postController.newPost(id, new Post());
+    }
+
+    @Test
+    public void newPost_Success() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(userService.exists(id)).thenReturn(true);
+        Mockito.when(postService.save(post)).thenReturn(post);
+
+        // Test
+        Post res = this.postController.newPost(id, post);
+
+        // Validate
+        Assert.assertEquals(post.getId(), res.getId());
+    }
 }
