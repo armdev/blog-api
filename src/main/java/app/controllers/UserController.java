@@ -4,7 +4,7 @@ import app.config.patch.json.Patch;
 import app.config.patch.json.PatchRequestBody;
 import app.exceptions.BadRequestException;
 import app.exceptions.NoContentException;
-import app.service.user.UserService;
+import app.service.user.IUserService;
 import app.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     /**
      * GET METHODS
@@ -71,7 +71,7 @@ public class UserController {
 
     @RequestMapping(method=RequestMethod.PATCH, value = "/users/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    @Patch(service = UserService.class, id = Long.class)
+    @Patch(service = IUserService.class, id = Long.class)
     public User patchUser(@PathVariable Long id, @PatchRequestBody User user) {
 
         if(!userService.exists(id)) {

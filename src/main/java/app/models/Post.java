@@ -18,6 +18,10 @@ public class Post {
      */
     public Post() {}
 
+    public Post(Long id) {
+        this.id = id;
+    }
+
     /**
      * Getters & Setters
      */

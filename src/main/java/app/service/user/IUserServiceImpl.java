@@ -1,8 +1,6 @@
 package app.service.user;
 
 import app.models.User;
-import app.service.user.UserDAO;
-import app.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,32 +10,32 @@ import java.util.List;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class IUserServiceImpl implements IUserService {
 
     @Autowired
-    private UserDAO userDAO;
+    private IUserDAO IUserDAO;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAll() {
-        return userDAO.findAll();
+        return IUserDAO.findAll();
     }
 
     @Override
     public List<User> findAll(List<Long> userIds) {
-        return userDAO.findAll(userIds);
+        return IUserDAO.findAll(userIds);
     }
 
     @Override
     public User find(Long userId) {
-        return userDAO.findOne(userId);
+        return IUserDAO.findOne(userId);
     }
 
     @Override
     public Boolean exists(Long userId) {
-        return userDAO.exists(userId);
+        return IUserDAO.exists(userId);
     }
 
     @Override
@@ -48,21 +46,21 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        return userDAO.save(user);
+        return IUserDAO.save(user);
     }
 
     @Override
     public User save(User user) {
-        return userDAO.save(user);
+        return IUserDAO.save(user);
     }
 
     @Override
     public List<User> save(List<User> users) {
-        return userDAO.save(users);
+        return IUserDAO.save(users);
     }
 
     @Override
     public void delete(Long userId) {
-        userDAO.delete(userId);
+        IUserDAO.delete(userId);
     }
 }

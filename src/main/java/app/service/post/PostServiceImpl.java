@@ -9,43 +9,43 @@ import java.util.List;
 
 @Service
 @Transactional
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements IPostService {
 
     @Autowired
-    private PostDAO postDAO;
+    private IPostDAO IPostDAO;
 
     @Override
     public List<Post> findAll() {
-        return postDAO.findAll();
+        return IPostDAO.findAll();
     }
 
     @Override
     public List<Post> findAll(List<Long> postIds) {
-        return postDAO.findAll(postIds);
+        return IPostDAO.findAll(postIds);
     }
 
     @Override
     public Post find(Long postId) {
-        return postDAO.findOne(postId);
+        return IPostDAO.findOne(postId);
     }
 
     @Override
     public Boolean exists(Long postId) {
-        return postDAO.exists(postId);
+        return IPostDAO.exists(postId);
     }
 
     @Override
     public Post save(Post post) {
-        return postDAO.save(post);
+        return IPostDAO.save(post);
     }
 
     @Override
     public List<Post> save(List<Post> posts) {
-        return postDAO.save(posts);
+        return IPostDAO.save(posts);
     }
 
     @Override
     public void delete(Long postId) {
-        postDAO.delete(postId);
+        IPostDAO.delete(postId);
     }
 }

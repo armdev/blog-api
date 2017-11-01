@@ -4,7 +4,7 @@ import app.models.Post;
 
 import java.util.List;
 
-public interface PostService {
+public interface IPostService {
     List<Post> findAll();
     List<Post> findAll(List<Long> postIds);
     Post find(Long postId);

@@ -30,7 +30,9 @@ dependencies {
 
     compile("org.springframework.security:spring-security-crypto")
 
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-hibernate4:2.4.4')
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-hibernate4:2.4.4")
 
     compile("mysql:mysql-connector-java")
+
+    compile("org.springframework.boot:spring-boot-starter-test")
 }

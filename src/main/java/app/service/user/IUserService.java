@@ -4,7 +4,7 @@ import app.models.User;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
     List<User> findAll();
     List<User> findAll(List<Long> userIds);
     User find(Long userId);

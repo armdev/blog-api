@@ -6,8 +6,8 @@ import app.exceptions.BadRequestException;
 import app.exceptions.NoContentException;
 import app.models.Post;
 import app.models.User;
-import app.service.post.PostService;
-import app.service.user.UserService;
+import app.service.post.IPostService;
+import app.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +17,17 @@ import java.util.List;
 @RestController
 public class PostController {
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+    private IUserService userService;
+
+//    @Autowired
+    private IPostService postService;
 
     @Autowired
-    private PostService postService;
+    public PostController(IUserService userService, IPostService postService) {
+        this.userService = userService;
+        this.postService = postService;
+    }
 
     /**
      * GET METHODS
@@ -101,7 +107,7 @@ public class PostController {
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/posts/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    @Patch(service = PostService.class, id = Long.class)
+    @Patch(service = IPostService.class, id = Long.class)
     public Post patchPost(@PathVariable Long id, @PatchRequestBody Post post) {
 
         if(!postService.exists(id)) {
