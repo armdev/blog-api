@@ -76,7 +76,7 @@ public class PostControllerTest {
     @Test(expected = NoContentException.class)
     public void getPosts_Failure() {
         // Setup
-        Mockito.when(postService.findAll()).thenReturn(null);
+        Mockito.when(postService.findAll()).thenReturn(new ArrayList<Post>());
 
         // Test
         this.postController.getPosts();
@@ -150,5 +150,88 @@ public class PostControllerTest {
 
         // Validate
         Assert.assertEquals(post.getId(), res.getId());
+    }
+
+    @Test
+    public void updatePost_Success() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(true);
+        Mockito.when(postService.save(post)).thenReturn(post);
+
+        // Test
+        Post res = this.postController.updatePost(id, post);
+
+        // Validate
+        Assert.assertEquals(res.getId(), post.getId());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void updatePost_Failure() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(false);
+
+        // Test
+        Post res = this.postController.updatePost(id, post);
+    }
+
+    @Test
+    public void patchPost_Success() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(true);
+        Mockito.when(postService.save(post)).thenReturn(post);
+
+        // Test
+        Post res = this.postController.patchPost(id, post);
+
+        // Validate
+        Assert.assertEquals(res.getId(), post.getId());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void patchPost_Failure() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(false);
+
+        // Test
+        Post res = this.postController.patchPost(id, post);
+    }
+
+    @Test
+    public void deletePost_Success() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(true);
+
+        // Test
+        this.postController.deletePost(id);
+
+        // Validate
+        Mockito.validateMockitoUsage();
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void deletePost_Failure() {
+        // Setup
+        Long id = Long.valueOf("123");
+        Post post = new Post(id);
+
+        Mockito.when(postService.exists(id)).thenReturn(false);
+
+        // Test
+        this.postController.deletePost(id);
     }
 }
